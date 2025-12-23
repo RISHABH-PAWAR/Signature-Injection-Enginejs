@@ -67,12 +67,11 @@ This project solves that problem deterministically.
 
 ### Normalized format (stored from frontend)
 ```json
-{
-  "x": 0.42,
-  "y": 0.68,
-  "width": 0.22,
-  "height": 0.08
-}
+Last Field Position:
+X: 24.89%
+Y: 33.55%
+W: 15.00%
+H: 15.00%
 
 
 
