@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Upload, FileText } from 'lucide-react';
 import axios from 'axios';
 
+// Get API URL from environment variable
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const PDFUpload = ({ onUploadSuccess }) => {
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
@@ -50,7 +53,9 @@ const PDFUpload = ({ onUploadSuccess }) => {
       const formData = new FormData();
       formData.append('pdf', file);
 
-      const response = await axios.post('http://localhost:5000/api/upload-pdf', formData, {
+      console.log('📤 Uploading to:', `${API_URL}/api/upload-pdf`);
+
+      const response = await axios.post(`${API_URL}/api/upload-pdf`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -60,7 +65,7 @@ const PDFUpload = ({ onUploadSuccess }) => {
 
       onUploadSuccess({
         documentId: response.data.documentId,
-        pdfUrl: `http://localhost:5000${response.data.pdfUrl}`,
+        pdfUrl: `${API_URL}${response.data.pdfUrl}`,
         fileName: file.name,
         hash: response.data.hash,
         dimensions: response.data.dimensions
@@ -70,7 +75,7 @@ const PDFUpload = ({ onUploadSuccess }) => {
 
     } catch (error) {
       console.error('❌ Upload error:', error);
-      alert(`❌ Upload failed: ${error.response?.data?.error || error.message}`);
+      alert(`❌ Upload failed: ${error.response?.data?.error || error.message}\n\nAPI URL: ${API_URL}`);
     } finally {
       setUploading(false);
     }
@@ -136,6 +141,11 @@ const PDFUpload = ({ onUploadSuccess }) => {
           <li>✅ Secure SHA-256 hashing</li>
           <li>✅ MongoDB storage with audit trail</li>
         </ul>
+      </div>
+
+      {/* Show API URL for debugging */}
+      <div className="mt-2 text-xs text-gray-400 text-center">
+        Backend: <code className="bg-gray-100 px-2 py-1 rounded">{API_URL}</code>
       </div>
     </div>
   );

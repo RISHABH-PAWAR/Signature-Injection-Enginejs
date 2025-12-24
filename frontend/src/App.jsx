@@ -6,7 +6,11 @@ import FieldToolbox from './components/FieldToolbox';
 import SignatureModal from './components/SignatureModal';
 import PDFUpload from './components/PDFUpload';
 
+// Get API URL from environment variable
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+console.log('🔗 API URL:', API_URL);
+
 const App = () => {
   const [fields, setFields] = useState([]);
   const [pdfData, setPdfData] = useState(null);
@@ -96,11 +100,13 @@ const App = () => {
           y: f.y,
           width: f.width,
           height: f.height,
-          value: f.value
+          value: f.value,
+          options: f.options
         }))
       };
 
       console.log('📤 Sending to backend:', payload);
+      console.log('🔗 API Endpoint:', `${API_URL}/api/sign-pdf`);
 
       // Call backend API
       const response = await axios.post(`${API_URL}/api/sign-pdf`, payload, {
@@ -146,7 +152,7 @@ const App = () => {
           errorMessage = error.response.data?.error || errorMessage;
         }
       } else if (error.request) {
-        errorMessage = 'No response from server. Is the backend running?';
+        errorMessage = 'No response from server. Is the backend running on ' + API_URL + '?';
       } else {
         errorMessage = error.message;
       }
@@ -219,6 +225,11 @@ const App = () => {
               </div>
             </div>
           )}
+
+          {/* API Connection Status */}
+          <div className="mt-2 text-xs text-gray-500">
+            🔗 Connected to: <code className="bg-gray-100 px-2 py-1 rounded">{API_URL}</code>
+          </div>
         </div>
 
         {/* PDF Upload Area */}
@@ -258,7 +269,7 @@ const App = () => {
           <h2 className="text-xl font-bold mb-3">✨ Features Implemented</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div className="bg-blue-50 p-4 rounded border border-blue-200">
-              <h3 className="font-semibold mb-2 text-blue-800"> PDF Management</h3>
+              <h3 className="font-semibold mb-2 text-blue-800">📄 PDF Management</h3>
               <ul className="text-blue-700 space-y-1">
                 <li>✅ Upload any PDF document</li>
                 <li>✅ Real PDF preview</li>
@@ -267,7 +278,7 @@ const App = () => {
               </ul>
             </div>
             <div className="bg-green-50 p-4 rounded border border-green-200">
-              <h3 className="font-semibold mb-2 text-green-800">Field Types</h3>
+              <h3 className="font-semibold mb-2 text-green-800">🎯 Field Types</h3>
               <ul className="text-green-700 space-y-1">
                 <li>✅ Signature (drawable)</li>
                 <li>✅ Text (editable inline)</li>
@@ -277,7 +288,7 @@ const App = () => {
               </ul>
             </div>
             <div className="bg-purple-50 p-4 rounded border border-purple-200">
-              <h3 className="font-semibold mb-2 text-purple-800">Field Actions</h3>
+              <h3 className="font-semibold mb-2 text-purple-800">🔧 Field Actions</h3>
               <ul className="text-purple-700 space-y-1">
                 <li>✅ Drag & drop positioning</li>
                 <li>✅ Resize any field</li>
