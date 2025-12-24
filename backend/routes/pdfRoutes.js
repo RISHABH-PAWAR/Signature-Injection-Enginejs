@@ -35,7 +35,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 // 10MB default
+    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
@@ -46,10 +46,7 @@ const upload = multer({
   }
 });
 
-/**
- * POST /api/upload-pdf
- * Upload a PDF file and calculate its hash
- */
+
 router.post('/upload-pdf', upload.single('pdf'), async (req, res) => {
   try {
     if (!req.file) {
@@ -62,7 +59,6 @@ router.post('/upload-pdf', upload.single('pdf'), async (req, res) => {
     const pdfPath = req.file.path;
     const pdfBuffer = await fs.readFile(pdfPath);
     
-    // Calculate hash of original PDF
     const pdfHash = calculateHash(pdfBuffer);
     
     // Load PDF to get dimensions
@@ -71,7 +67,6 @@ router.post('/upload-pdf', upload.single('pdf'), async (req, res) => {
     const { width, height } = firstPage.getSize();
     const pageCount = pdfDoc.getPageCount();
     
-    // Save document record to database
     const document = new Document({
       originalPdfHash: pdfHash,
       originalPdfUrl: `/uploads/${req.file.filename}`,
@@ -105,10 +100,7 @@ router.post('/upload-pdf', upload.single('pdf'), async (req, res) => {
   }
 });
 
-/**
- * POST /api/sign-pdf
- * Main endpoint: Process fields and generate signed PDF for download
- */
+
 router.post('/sign-pdf', async (req, res) => {
   try {
     const { documentId, fields } = req.body;
@@ -159,7 +151,7 @@ router.post('/sign-pdf', async (req, res) => {
         continue;
       }
       
-      // Convert coordinates from percentage (top-left) to points (bottom-left)
+      
       const coords = convertCoordinates(field, pdfWidth, pdfHeight);
       
       console.log(`   ✓ Processing ${field.type} field:`);
@@ -212,7 +204,6 @@ router.post('/sign-pdf', async (req, res) => {
         }
         
       } else if (field.type === 'text') {
-        // Handle text fields
         const textValue = field.value || 'Text Field';
         const fontSize = Math.min(coords.height * 0.6, 12);
         
@@ -227,7 +218,6 @@ router.post('/sign-pdf', async (req, res) => {
         console.log(`     Text: "${textValue}"`);
         
       } else if (field.type === 'date') {
-        // Handle date fields
         const dateValue = field.value || new Date().toISOString().split('T')[0];
         const fontSize = Math.min(coords.height * 0.6, 10);
         
@@ -241,11 +231,10 @@ router.post('/sign-pdf', async (req, res) => {
         console.log(`     Date: ${dateValue}`);
         
       } else if (field.type === 'radio') {
-        // Handle radio/dropdown fields - FIXED: Smaller filled circle
+        
         const radioOptions = field.options || ['Option 1', 'Option 2', 'Option 3'];
         const selectedValue = field.value || 'option1';
         
-        // Map value to option text
         const valueIndex = parseInt(selectedValue.replace('option', '')) - 1;
         const displayText = radioOptions[valueIndex] || radioOptions[0];
         
@@ -254,7 +243,7 @@ router.post('/sign-pdf', async (req, res) => {
         const circleX = coords.x + circleRadius + 4;
         const circleY = coords.y + (coords.height / 2);
         
-        // Draw empty circle (radio button outline)
+       
         firstPage.drawCircle({
           x: circleX,
           y: circleY,
@@ -263,12 +252,11 @@ router.post('/sign-pdf', async (req, res) => {
           borderWidth: 1.5
         });
         
-        // Draw small filled circle inside (selected indicator) - MUCH SMALLER NOW
         if (field.value) {
           firstPage.drawCircle({
             x: circleX,
             y: circleY,
-            size: circleRadius * 0.35,  // Changed from 0.6 to 0.35 for smaller dot
+            size: circleRadius * 0.35, 
             color: rgb(0, 0, 0)
           });
         }
@@ -321,10 +309,7 @@ router.post('/sign-pdf', async (req, res) => {
   }
 });
 
-/**
- * GET /api/document/:id
- * Retrieve document information including hashes
- */
+
 router.get('/document/:id', async (req, res) => {
   try {
     const document = await Document.findById(req.params.id);
@@ -357,10 +342,7 @@ router.get('/document/:id', async (req, res) => {
   }
 });
 
-/**
- * GET /api/verify/:id
- * Verify document integrity by comparing hashes
- */
+
 router.get('/verify/:id', async (req, res) => {
   try {
     const document = await Document.findById(req.params.id);
@@ -413,10 +395,7 @@ router.get('/verify/:id', async (req, res) => {
   }
 });
 
-/**
- * GET /api/documents
- * List all documents
- */
+
 router.get('/documents', async (req, res) => {
   try {
     const documents = await Document.find()

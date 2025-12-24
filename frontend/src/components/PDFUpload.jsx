@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Upload, FileText } from 'lucide-react';
 import axios from 'axios';
 
-// Get API URL from environment variable
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const PDFUpload = ({ onUploadSuccess }) => {

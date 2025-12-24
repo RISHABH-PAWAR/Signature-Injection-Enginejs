@@ -10,9 +10,9 @@ const DraggableField = ({ field, containerDimensions, onUpdate, onDelete, onClic
   const [initialPos, setInitialPos] = useState({ x: 0, y: 0 });
   const fieldRef = useRef(null);
 
-  // Dragging logic - FIXED for top of page
+  
   const handleMouseDown = (e) => {
-    // Prevent dragging if clicking on interactive elements
+  
     if (e.target.classList.contains('resize-handle') || 
         e.target.classList.contains('delete-btn') ||
         e.target.classList.contains('edit-btn') ||
@@ -165,7 +165,6 @@ const DraggableField = ({ field, containerDimensions, onUpdate, onDelete, onClic
     }
   };
 
-  // Handle inline editing for text
   const handleEdit = (e) => {
     e.stopPropagation();
     setIsEditing(true);
@@ -182,19 +181,17 @@ const DraggableField = ({ field, containerDimensions, onUpdate, onDelete, onClic
     setIsEditing(false);
   };
 
-  // Handle date selection
   const handleDateChange = (e) => {
     e.stopPropagation();
     onUpdate(field.id, { value: e.target.value });
   };
 
-  // Handle radio selection - FIXED with edit option
+ 
   const handleRadioChange = (e) => {
     e.stopPropagation();
     onUpdate(field.id, { value: e.target.value });
   };
 
-  // Handle image upload
   const handleImageUpload = (e) => {
     e.stopPropagation();
     const file = e.target.files[0];
@@ -212,7 +209,6 @@ const DraggableField = ({ field, containerDimensions, onUpdate, onDelete, onClic
     reader.readAsDataURL(file);
   };
 
-  // Render field content based on type
   const renderFieldContent = () => {
     if (isEditing && field.type === 'text') {
       return (
