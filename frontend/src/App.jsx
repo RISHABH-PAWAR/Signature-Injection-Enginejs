@@ -6,8 +6,7 @@ import FieldToolbox from './components/FieldToolbox';
 import SignatureModal from './components/SignatureModal';
 import PDFUpload from './components/PDFUpload';
 
-const API_URL = 'http://localhost:5000';
-
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const App = () => {
   const [fields, setFields] = useState([]);
   const [pdfData, setPdfData] = useState(null);
